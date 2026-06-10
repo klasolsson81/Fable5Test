@@ -270,18 +270,22 @@ export class ConstructScene {
       this.holoGroup.add(ring);
     }
 
-    // Particle halo
+    // Particle halo — kept sparse and out of the corridor in front of the
+    // face (the group billboards toward the camera along local +z)
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const count = isMobile ? 500 : 1300;
+    const count = isMobile ? 320 : 750;
     const positions = new Float32Array(count * 3);
     const seeds = new Float32Array(count);
     for (let i = 0; i < count; i++) {
-      const r = 2.2 + Math.random() * 1.6;
+      const r = 2.7 + Math.random() * 1.5;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
-      positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      const x = r * Math.sin(phi) * Math.cos(theta);
+      let z = r * Math.sin(phi) * Math.sin(theta);
+      if (Math.abs(x) < 2.2 && z > -0.3) z = -0.6 - Math.abs(z) * 0.7;
+      positions[i * 3] = x;
       positions[i * 3 + 1] = 3.0 + r * Math.cos(phi) * 0.8;
-      positions[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+      positions[i * 3 + 2] = z;
       seeds[i] = Math.random();
     }
     const geo = new THREE.BufferGeometry();
@@ -290,7 +294,7 @@ export class ConstructScene {
     this.particleMat = new THREE.ShaderMaterial({
       vertexShader: PARTICLE_VERT,
       fragmentShader: PARTICLE_FRAG,
-      uniforms: { uTime: { value: 0 }, uSize: { value: 26 } },
+      uniforms: { uTime: { value: 0 }, uSize: { value: 9 } },
       transparent: true,
       depthWrite: false,
       blending: THREE.AdditiveBlending,

@@ -158,8 +158,8 @@ export const HOLO_FRAG = /* glsl */ `
     c *= lambert;
     c += green * rim * 0.55;
 
-    float scan = 0.82 + 0.18 * sin(uv.y * 320.0 + uTime * 7.0);
-    float flicker = 0.95 + 0.05 * sin(uTime * 53.0) * sin(uTime * 19.0);
+    float scan = 0.89 + 0.11 * sin(uv.y * 320.0 + uTime * 7.0);
+    float flicker = 0.96 + 0.04 * sin(uTime * 53.0) * sin(uTime * 19.0);
 
     // Materialize out of the projector cone at the bottom edge
     alpha *= smoothstep(0.01, 0.14, vUv.y);
@@ -262,7 +262,7 @@ export const PARTICLE_FRAG = /* glsl */ `
   varying float vTwinkle;
   void main() {
     float d = length(gl_PointCoord - 0.5);
-    float a = smoothstep(0.5, 0.05, d) * vTwinkle * 0.7;
+    float a = smoothstep(0.42, 0.1, d) * vTwinkle * 0.32;
     gl_FragColor = vec4(vec3(0.3, 1.0, 0.55), a);
   }
 `;
