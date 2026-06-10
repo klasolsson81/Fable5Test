@@ -30,12 +30,14 @@ export function Hud() {
       <div className="hud__actions">
         {phase === 'red' && station && (
           <button className="hud__btn" onClick={() => { click(); setStation(null); }}>
-            ◂ {t.hud.backToHub}
+            <span className="hud__btn-ico">◂</span>
+            <span className="hud__btn-label">{t.hud.backToHub}</span>
           </button>
         )}
         {(phase === 'red' || phase === 'white') && (
           <button className="hud__btn hud__btn--chat" onClick={() => { click(); setChatOpen(true); }}>
-            ▸_ {t.hud.openChat}
+            <span className="hud__btn-ico">▸_</span>
+            <span className="hud__btn-label">{t.hud.openChat}</span>
           </button>
         )}
         {phase !== 'choice' && (
@@ -49,7 +51,8 @@ export function Hud() {
           onClick={() => { audio.unlock(); toggleMuted(); audio.play('click'); }}
           aria-label={t.a11y.soundToggle}
         >
-          {muted ? '◌ ' + t.hud.soundOff : '◉ ' + t.hud.soundOn}
+          <span className="hud__btn-ico">{muted ? '◌' : '◉'}</span>
+          <span className="hud__btn-label">{muted ? t.hud.soundOff : t.hud.soundOn}</span>
         </button>
 
         <div className="hud__lang" role="group" aria-label={t.a11y.langToggle}>

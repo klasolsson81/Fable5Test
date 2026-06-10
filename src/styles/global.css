@@ -215,6 +215,9 @@ h1, h2, h3 { font-family: var(--display); letter-spacing: 0.06em; }
 .hud__actions { display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; justify-content: flex-end; }
 
 .hud__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
   font-family: var(--display);
   font-weight: 600;
   font-size: 0.78rem;
@@ -1123,30 +1126,120 @@ h1, h2, h3 { font-family: var(--display); letter-spacing: 0.06em; }
 
 /* ── Responsive ────────────────────────────────────────────────────── */
 
+/* Buttons: no gray tap flash, no double-tap zoom delay on touch */
+button, a { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+
+.hud__btn-ico { display: inline-block; }
+
+/* Tablet / small laptop */
+@media (max-width: 1100px) {
+  .station-panel { width: min(540px, calc(100vw - 24px)); }
+  .modal__window { padding: 1.1rem 1.2rem 1.3rem; }
+}
+
+/* Phone */
 @media (max-width: 720px) {
-  .hud { padding: 0.45rem 0.7rem; }
+  body { font-size: 14px; }
+
+  .hud {
+    padding: 0.4rem 0.7rem;
+    padding-top: calc(0.4rem + env(safe-area-inset-top));
+  }
   .hud__brand-sub { display: none; }
+  .hud__brand-text { font-size: 0.98rem; }
   .hud__btn--ghost { display: none; }
-  .hud__btn { font-size: 0.68rem; }
+  .hud__btn { font-size: 0.7rem; padding: 0.4em 0.6em; }
+
+  /* Choice screen: tighter rhythm, smaller pills */
+  .choice__inner { padding: 4.4rem 0 2rem; }
+  .choice__pills { gap: 1.1rem; margin-top: 2rem; max-width: 420px; }
+  .pill-card { padding: 1.4rem 1.1rem 1.2rem; gap: 0.8rem; }
+  .pill { width: 116px; height: 48px; }
+  .pill__half--a { border-radius: 24px 0 0 24px; }
+  .pill__half--b { border-radius: 0 24px 24px 0; }
+  .pill__shine { top: 7px; left: 12px; height: 10px; }
+  .pill-card__name { font-size: 1.1rem; }
+  .pill-card__desc { font-size: 0.8rem; }
+  .choice__hint { margin-top: 1.8rem; }
 
   .station-panel {
-    top: 54px;
+    top: calc(50px + env(safe-area-inset-top));
     right: 0;
     bottom: 0;
     left: 0;
     width: 100%;
     clip-path: none;
+    border-left: none;
+    border-right: none;
   }
-  .red__hint { bottom: 110px; }
+  .station-panel__head { padding: 0.9rem 1rem 0.7rem; }
+  .station-panel__body { padding: 1rem 1rem 1.4rem; padding-bottom: calc(1.4rem + env(safe-area-inset-bottom)); }
+  .station-panel__title { font-size: 1.25rem; }
+
+  .red__hint { bottom: 116px; font-size: 0.64rem; }
+  .red__nav { bottom: calc(10px + env(safe-area-inset-bottom)); }
 
   .modal { padding: 0; }
-  .modal__window { max-height: 100dvh; clip-path: none; }
+  .modal__window {
+    max-height: 100dvh;
+    height: 100dvh;
+    clip-path: none;
+    padding: 0.9rem 0.9rem calc(1.1rem + env(safe-area-inset-bottom));
+  }
+  .modal__img { max-height: 38vh; }
+  .modal__facts { gap: 1.2rem; }
+  .modal__dot { width: 12px; height: 12px; }
 
   .chat-overlay { padding: 0; }
-  .chat-overlay__window { width: 100%; height: 100dvh; clip-path: none; }
+  .chat-overlay__window {
+    width: 100%;
+    height: 100dvh;
+    clip-path: none;
+    padding: 0.9rem 0.9rem calc(0.9rem + env(safe-area-inset-bottom));
+  }
 
-  .dossier { padding-top: 4.6rem; }
-  .dossier__nav { top: 46px; }
+  .dossier { padding: 4.6rem 0.9rem 1.6rem; }
+  .dossier__nav { top: 46px; font-size: 0.7rem; gap: 0.2rem 1rem; }
+  .dossier__profile { padding: 0.9rem; gap: 1rem; }
+  .dossier__photo { width: 104px; height: 104px; }
+  .dossier__facts dt { min-width: 6em; }
+
+  .skills__row { flex-wrap: wrap; gap: 0.3rem 1rem; }
+  .skills__level { margin-left: auto; }
+  .dots__dot { width: 11px; height: 11px; }
+
+  .lia-banner { padding: 0.8rem 0.9rem; }
+  .timeline { padding-left: 1.2rem; }
+
+  .toast { max-width: 92vw; text-align: center; font-size: 0.78rem; }
+}
+
+/* Small phones */
+@media (max-width: 380px) {
+  .hud__btn-label { display: none; }
+  .hud__lang-btn { font-size: 0.76rem; }
+  .projects__grid { grid-template-columns: 1fr; }
+}
+
+/* Landscape phones: reclaim vertical space */
+@media (max-height: 540px) {
+  .choice__inner { padding: 3.6rem 0 1.4rem; }
+  .choice__pills { grid-template-columns: 1fr 1fr; gap: 1rem; max-width: 640px; }
+  .pill { width: 96px; height: 40px; }
+  .pill__half--a { border-radius: 20px 0 0 20px; }
+  .pill__half--b { border-radius: 0 20px 20px 0; }
+  .pill-card { padding: 1rem 0.9rem; gap: 0.55rem; }
+  .choice__audio-hint { display: none; }
+  .station-panel__head { padding: 0.6rem 1rem 0.5rem; }
+  .red__hint { display: none; }
+}
+
+/* Touch devices: inputs ≥16px stops iOS auto-zoom; bigger hit areas */
+@media (pointer: coarse) {
+  .field__input, .chat__input { font-size: 16px; }
+  .modal__arrow { width: 52px; height: 64px; }
+  .red__nav-btn { padding: 0.6em 1em; }
+  .hud__btn { min-height: 34px; }
 }
 
 /* ── Reduced motion ────────────────────────────────────────────────── */

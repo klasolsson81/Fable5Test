@@ -75,11 +75,15 @@ export class ConstructScene {
   private pointer = new THREE.Vector2();
   private pointerDown = new THREE.Vector2();
   private dragging = false;
+  /** Manual drag tracking — PointerEvent.movementX is unreliable on iOS Safari. */
+  private lastPointerX: number | null = null;
   private hovered: StationId | 'rabbit' | null = null;
 
   // Camera rig
   private azimuth = Math.PI * 0.5;
   private azimuthVel = 0;
+  /** Widened in portrait so the station ring stays in view on phones. */
+  private hubRadius = HUB_RADIUS;
   private focused: StationId | null = null;
   private flight: {
     t: number; dur: number;
@@ -113,6 +117,8 @@ export class ConstructScene {
     });
     this.renderer.setPixelRatio(this.dpr);
     this.renderer.setClearColor(0x020705);
+    // Own all touch gestures on the canvas (orbit drag vs browser pan/zoom)
+    canvas.style.touchAction = 'none';
 
     this.camera = new THREE.PerspectiveCamera(55, 1, 0.1, 120);
     this.resize();
@@ -460,9 +466,9 @@ export class ConstructScene {
 
   private hubPos(): THREE.Vector3 {
     return new THREE.Vector3(
-      Math.cos(this.azimuth) * HUB_RADIUS,
+      Math.cos(this.azimuth) * this.hubRadius,
       HUB_HEIGHT,
-      Math.sin(this.azimuth) * HUB_RADIUS,
+      Math.sin(this.azimuth) * this.hubRadius,
     );
   }
 
@@ -523,19 +529,22 @@ export class ConstructScene {
 
   private onPointerMove = (e: PointerEvent): void => {
     this.setPointer(e);
-    if (this.dragging && !this.focused) {
-      this.azimuthVel += (e.movementX || 0) * 0.00018;
+    if (this.dragging && !this.focused && this.lastPointerX !== null) {
+      this.azimuthVel += (e.clientX - this.lastPointerX) * 0.00022;
+      this.lastPointerX = e.clientX;
     }
   };
 
   private onPointerDown = (e: PointerEvent): void => {
     this.dragging = true;
+    this.lastPointerX = e.clientX;
     this.pointerDown.set(e.clientX, e.clientY);
     this.setPointer(e);
   };
 
   private onPointerUp = (e: PointerEvent): void => {
     this.dragging = false;
+    this.lastPointerX = null;
     const dx = e.clientX - this.pointerDown.x;
     const dy = e.clientY - this.pointerDown.y;
     if (dx * dx + dy * dy > 64) return; // it was a drag, not a click
@@ -550,6 +559,7 @@ export class ConstructScene {
 
   private onPointerLeave = (): void => {
     this.dragging = false;
+    this.lastPointerX = null;
     this.hovered = null;
   };
 
@@ -705,7 +715,11 @@ export class ConstructScene {
     const w = canvas.clientWidth || window.innerWidth;
     const h = canvas.clientHeight || window.innerHeight;
     this.renderer.setSize(w, h, false);
-    this.camera.aspect = w / h;
+    const aspect = w / h;
+    this.camera.aspect = aspect;
+    // Portrait phones: wider FOV + camera further out so the station ring fits
+    this.camera.fov = aspect < 0.9 ? 64 : 55;
+    this.hubRadius = aspect < 0.9 ? 13.6 : HUB_RADIUS;
     this.camera.updateProjectionMatrix();
   };
 
