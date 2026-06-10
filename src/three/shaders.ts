@@ -168,6 +168,53 @@ export const HOLO_FRAG = /* glsl */ `
   }
 `;
 
+/** Hologram treatment for a real GLB head model (Tripo/Meshy etc). */
+export const HOLO_MODEL_VERT = /* glsl */ `
+  varying vec3 vNormal;
+  varying vec3 vWorld;
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    vNormal = normalize(normalMatrix * normal);
+    vec4 world = modelMatrix * vec4(position, 1.0);
+    vWorld = world.xyz;
+    gl_Position = projectionMatrix * viewMatrix * world;
+  }
+`;
+
+export const HOLO_MODEL_FRAG = /* glsl */ `
+  precision mediump float;
+  uniform sampler2D uMap;
+  uniform float uHasMap;
+  uniform float uTime;
+  uniform float uGlitch;
+  uniform float uOpacity;
+  varying vec3 vNormal;
+  varying vec3 vWorld;
+  varying vec2 vUv;
+
+  float hash(float n) { return fract(sin(n) * 43758.5453123); }
+
+  void main() {
+    vec2 uv = vUv;
+    float row = floor(vWorld.y * 14.0 + uTime * 30.0);
+    uv.x += (hash(row) - 0.5) * 0.10 * uGlitch;
+
+    vec3 base = mix(vec3(0.55, 0.75, 0.62), texture2D(uMap, uv).rgb, uHasMap);
+    float lum = dot(base, vec3(0.299, 0.587, 0.114));
+    vec3 green = vec3(0.35, 1.0, 0.6);
+    vec3 c = mix(base, green * lum * 1.25, 0.55);
+
+    float fres = pow(1.0 - max(dot(normalize(vNormal), vec3(0.0, 0.0, 1.0)), 0.0), 2.0);
+    c += green * fres * 0.7;
+
+    float scan = 0.9 + 0.1 * sin(vWorld.y * 46.0 - uTime * 5.0);
+    float flicker = 0.96 + 0.04 * sin(uTime * 53.0) * sin(uTime * 19.0);
+
+    gl_FragColor = vec4(c * scan * flicker, uOpacity);
+  }
+`;
+
 export const HOLO_WIRE_FRAG = /* glsl */ `
   precision mediump float;
   uniform sampler2D uMap;

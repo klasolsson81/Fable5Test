@@ -68,6 +68,8 @@ const CASES: [string, 'vert' | 'frag', string][] = [
   ['holo', 'vert', shaders.HOLO_VERT],
   ['holo', 'frag', shaders.HOLO_FRAG],
   ['holo-wire', 'frag', shaders.HOLO_WIRE_FRAG],
+  ['holo-model', 'vert', shaders.HOLO_MODEL_VERT],
+  ['holo-model', 'frag', shaders.HOLO_MODEL_FRAG],
   ['cone', 'vert', shaders.CONE_VERT],
   ['cone', 'frag', shaders.CONE_FRAG],
   ['panel', 'vert', shaders.PANEL_VERT],

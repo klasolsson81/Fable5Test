@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {
   RAIN_VERT, RAIN_FRAG, FLOOR_VERT, FLOOR_FRAG, HOLO_VERT, HOLO_FRAG, HOLO_WIRE_FRAG,
+  HOLO_MODEL_VERT, HOLO_MODEL_FRAG,
   CONE_VERT, CONE_FRAG, PANEL_VERT, PANEL_FRAG, PARTICLE_VERT, PARTICLE_FRAG,
 } from './shaders';
 import { buildGlyphAtlas, buildLabelTexture, buildIconTexture, buildRabbitTexture } from './glyphs';
@@ -38,6 +39,9 @@ const HUB_TARGET = new THREE.Vector3(0, 2.4, 0);
 const HUB_RADIUS = 11.2;
 const HUB_HEIGHT = 3.8;
 
+/** Drop a Tripo/Meshy GLB here and it replaces the relief bust automatically. */
+const HEAD_MODEL_PATH = '/models/klas-head.glb';
+
 const easeInOut = (t: number): number => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const easeOut = (t: number): number => 1 - Math.pow(1 - t, 3);
 
@@ -60,7 +64,8 @@ export class ConstructScene {
   private particleMat!: THREE.ShaderMaterial;
   private particles!: THREE.Points;
   private innerRain: THREE.Mesh | null = null;
-  private rings: THREE.Mesh[] = [];
+  /** True when a real GLB head model is loaded instead of the relief bust. */
+  private holoIsModel = false;
   private stations: StationNode[] = [];
   private rabbit: THREE.Sprite | null = null;
   private rabbitAnim: { t: number; from: THREE.Vector3; to: THREE.Vector3 } | null = null;
@@ -187,8 +192,77 @@ export class ConstructScene {
   }
 
   private buildHologram(): void {
-    // Depth-displaced bust — photo cutout + baked depth map become a relief
-    // mesh with real parallax. Loads async; the rest works regardless.
+    // Prefer a real 3D head (GLB from e.g. Tripo) when one is provided;
+    // fall back to the depth-baked relief bust. Both load async.
+    void fetch(HEAD_MODEL_PATH, { method: 'HEAD' })
+      .then((res) => {
+        if (!res.ok || !/model|octet|gltf/i.test(res.headers.get('content-type') ?? '')) {
+          throw new Error('no head model');
+        }
+        return this.buildGlbHead();
+      })
+      .catch(() => this.buildReliefBust());
+
+    this.buildProjector();
+  }
+
+  private async buildGlbHead(): Promise<void> {
+    const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
+    const gltf = await new GLTFLoader().loadAsync(HEAD_MODEL_PATH);
+    if (this.disposed) return;
+    const root = gltf.scene;
+
+    // Steal the first base-color texture, then swap every material for the holo shader
+    let map: THREE.Texture | null = null;
+    root.traverse((obj) => {
+      if (obj instanceof THREE.Mesh) {
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        for (const m of mats) {
+          const std = m as THREE.MeshStandardMaterial;
+          if (!map && std.map) map = std.map;
+        }
+      }
+    });
+    this.holoMat = new THREE.ShaderMaterial({
+      vertexShader: HOLO_MODEL_VERT,
+      fragmentShader: HOLO_MODEL_FRAG,
+      uniforms: {
+        uMap: { value: map ?? new THREE.Texture() },
+        uHasMap: { value: map ? 1 : 0 },
+        uTime: { value: 0 },
+        uGlitch: { value: 0 },
+        uOpacity: { value: 0.96 },
+      },
+      transparent: true,
+    });
+    root.traverse((obj) => {
+      if (obj instanceof THREE.Mesh) {
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        for (const m of mats) {
+          // Free everything from the original materials except the kept map
+          for (const value of Object.values(m)) {
+            if (value instanceof THREE.Texture && value !== map) value.dispose();
+          }
+          m.dispose();
+        }
+        obj.material = this.holoMat!;
+      }
+    });
+
+    // Normalize: ~3.2 units tall, centered over the projector
+    const box = new THREE.Box3().setFromObject(root);
+    const size = box.getSize(new THREE.Vector3());
+    root.scale.setScalar(3.2 / Math.max(size.y, 1e-4));
+    box.setFromObject(root);
+    const center = box.getCenter(new THREE.Vector3());
+    root.position.sub(center).add(new THREE.Vector3(0, 3.1, 0));
+
+    this.holoIsModel = true;
+    this.holoGroup.add(root);
+  }
+
+  private buildReliefBust(): void {
+    if (this.disposed) return;
     const loader = new THREE.TextureLoader();
     void Promise.all([
       loader.loadAsync('/img/profile/klas-cutout.webp'),
@@ -243,8 +317,10 @@ export class ConstructScene {
       wire.position.z += 0.012;
       this.holoGroup.add(wire);
     }).catch((err) => console.warn('hologram textures failed to load', err));
+  }
 
-    // Projector cone + emitter
+  /** Cone of light, emitter ring and particle halo around the hologram. */
+  private buildProjector(): void {
     this.coneMat = new THREE.ShaderMaterial({
       vertexShader: CONE_VERT,
       fragmentShader: CONE_FRAG,
@@ -258,17 +334,17 @@ export class ConstructScene {
     cone.position.y = 2.6;
     this.holoGroup.add(cone);
 
-    const ringGeo = new THREE.TorusGeometry(2.4, 0.018, 8, 80);
-    const ringMat = new THREE.MeshBasicMaterial({
-      color: 0x2eff7e, transparent: true, opacity: 0.5,
-      blending: THREE.AdditiveBlending, depthWrite: false,
-    });
-    for (let i = 0; i < 2; i++) {
-      const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.position.y = 2.9;
-      this.rings.push(ring);
-      this.holoGroup.add(ring);
-    }
+    // Emitter ring flat at the projector base — never crosses the face
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(2.0, 0.016, 8, 80),
+      new THREE.MeshBasicMaterial({
+        color: 0x2eff7e, transparent: true, opacity: 0.38,
+        blending: THREE.AdditiveBlending, depthWrite: false,
+      }),
+    );
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.y = 0.18;
+    this.holoGroup.add(ring);
 
     // Particle halo — kept sparse and out of the corridor in front of the
     // face (the group billboards toward the camera along local +z)
@@ -528,9 +604,15 @@ export class ConstructScene {
     // Hologram life
     if (!this.reducedMotion) {
       this.holoGroup.position.y = Math.sin(t * 0.7) * 0.1;
-      const camAz = Math.atan2(this.camera.position.x, this.camera.position.z);
-      const delta = Math.atan2(Math.sin(camAz - this.holoGroup.rotation.y), Math.cos(camAz - this.holoGroup.rotation.y));
-      this.holoGroup.rotation.y += delta * Math.min(1, dt * 2.2);
+      if (this.holoIsModel) {
+        // A real 3D head can rotate freely
+        this.holoGroup.rotation.y += dt * 0.22;
+      } else {
+        // The relief bust always faces the camera (with a soft lag)
+        const camAz = Math.atan2(this.camera.position.x, this.camera.position.z);
+        const delta = Math.atan2(Math.sin(camAz - this.holoGroup.rotation.y), Math.cos(camAz - this.holoGroup.rotation.y));
+        this.holoGroup.rotation.y += delta * Math.min(1, dt * 2.2);
+      }
       if (this.holoMat) {
         const g = this.holoMat.uniforms.uGlitch!;
         g.value = Math.max(0, (g.value as number) - dt * 2.4);
@@ -539,9 +621,6 @@ export class ConstructScene {
           this.glitchAt = t + 3.5 + Math.random() * 6;
         }
       }
-      const r0 = this.rings[0]; const r1 = this.rings[1];
-      if (r0) { r0.rotation.x = Math.PI / 2 + Math.sin(t * 0.4) * 0.18; r0.rotation.z = t * 0.25; }
-      if (r1) { r1.rotation.x = Math.PI / 2.3 + Math.cos(t * 0.33) * 0.22; r1.rotation.z = -t * 0.18; r1.scale.setScalar(1.18); }
     }
 
     // Stations: hover + dim + idle bob
