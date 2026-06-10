@@ -21,3 +21,6 @@ dist/
 
 # Test
 coverage/
+
+# TypeScript build cache
+tsconfig.tsbuildinfo
