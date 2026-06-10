@@ -48,7 +48,8 @@ describe('app smoke (white path)', () => {
     expect(screen.getByText(/KOMPETENSMATRIS/)).toBeTruthy();
     expect(screen.getByText('JobbPilot')).toBeTruthy();
     expect(screen.getByText('KalasKoll')).toBeTruthy();
-    expect(screen.getAllByText(/LIA 1: 31 aug/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/LIA 2: 8 mar/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/LIA 1 \(hösten 2026\) är redan säkrad/).length).toBeGreaterThan(0);
     expect(document.querySelector(`a[href='/cv/CV_Klas_Olsson.pdf']`)).toBeTruthy();
   });
 

@@ -23,8 +23,8 @@ export const PROFILE = {
     en: 'After 22 years in the automotive industry I took the red pill: in 2024 I quit my job to go all in on software development. I now study .NET at NBI/Handelsakademin in Gothenburg — while shipping real products for real clients. Whole products, from database to deploy. Not course exercises.',
   } satisfies L10n,
   lia: {
-    sv: 'Söker LIA: 31 aug–6 nov 2026 samt 8 mar–11 jun 2027 · Göteborg eller remote',
-    en: 'Seeking internship (LIA): Aug 31–Nov 6 2026 and Mar 8–Jun 11 2027 · Gothenburg or remote',
+    sv: 'LIA 1 (hösten 2026) är säkrad ✓ · Söker LIA 2: 8 mar–11 jun 2027 · Göteborg eller remote',
+    en: 'LIA 1 (autumn 2026) secured ✓ · Seeking LIA 2: Mar 8–Jun 11 2027 · Gothenburg or remote',
   } satisfies L10n,
 };
 

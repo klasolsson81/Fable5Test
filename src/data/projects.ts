@@ -164,8 +164,8 @@ export const PROJECTS: Project[] = [
       {
         title: { sv: 'Förtroende under NDA', en: 'Trust under NDA' },
         body: {
-          sv: 'Koden är inte publik — det är kundens produkt. Men siffrorna talar: 49+ tester och växande, levererat iterativt mot riktig produktägare. Vill du veta mer? Fråga mig i AI-terminalen eller boka ett samtal.',
-          en: 'The code is not public — it is the client’s product. But the numbers speak: 49+ tests and growing, delivered iteratively to a real product owner. Want to know more? Ask in the AI terminal or book a call.',
+          sv: 'Koden är inte publik — det är kundens produkt. Men siffrorna talar: 49+ tester och växande, levererat iterativt mot riktig produktägare. Bästa kvittot? Devotion Ventures tar emot mig som LIA-praktikant hösten 2026 efter att ha sett mitt arbete.',
+          en: 'The code is not public — it is the client’s product. But the numbers speak: 49+ tests and growing, delivered iteratively to a real product owner. The best receipt? Devotion Ventures is taking me on as their LIA intern in autumn 2026 after seeing my work.',
         },
       },
     ],

@@ -89,8 +89,8 @@ export const en: Dict = {
 
   experience: {
     intro: 'In 2024 I took the red pill for real: after 22 years in the automotive industry I went all in on software development.',
-    liaTitle: 'SEEKING INTERNSHIP (LIA)',
-    liaText: 'LIA 1: Aug 31 – Nov 6, 2026 · LIA 2: Mar 8 – Jun 11, 2027 · Gothenburg or remote. I also take consulting work alongside my studies.',
+    liaTitle: 'SEEKING LIA 2 — SPRING 2027',
+    liaText: 'LIA 1 (autumn 2026) is already secured. LIA 2: Mar 8 – Jun 11, 2027 is open — Gothenburg or remote. I also take consulting work alongside my studies.',
     liaCta: 'CONTACT ME',
   },
 
@@ -148,7 +148,7 @@ export const en: Dict = {
       languages: 'LANGUAGES',
     },
     values: {
-      status: 'Studying .NET · building products · seeking internship 2026/2027',
+      status: 'Studying .NET · building products · LIA 1 secured · seeking LIA 2 spring 2027',
       family: 'Married, father',
       languages: 'Swedish / English',
     },

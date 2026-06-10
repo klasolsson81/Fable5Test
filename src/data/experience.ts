@@ -10,11 +10,11 @@ export interface ExperienceEntry {
 
 export const EXPERIENCE: ExperienceEntry[] = [
   {
-    period: '2026 / 2027',
-    title: { sv: 'LIA-praktik — platsen är ledig', en: 'Internship (LIA) — the seat is open' },
+    period: '2027',
+    title: { sv: 'LIA 2 — platsen är ledig', en: 'Internship (LIA 2) — the seat is open' },
     body: {
-      sv: 'LIA 1: 31 aug – 6 nov 2026 · LIA 2: 8 mar – 11 jun 2027. Göteborg eller remote. Jag kommer med produktionserfarenhet, testdisciplin och AI-arbetsflöden från dag ett.',
-      en: 'LIA 1: Aug 31 – Nov 6, 2026 · LIA 2: Mar 8 – Jun 11, 2027. Gothenburg or remote. I arrive with production experience, testing discipline and AI workflows from day one.',
+      sv: 'LIA 1 (hösten 2026) är redan säkrad — hos Devotion Ventures, samma kund som anlitat mig för Yobber V2. LIA 2: 8 mar – 11 jun 2027 är öppen, Göteborg eller remote. Jag kommer med produktionserfarenhet, testdisciplin och AI-arbetsflöden från dag ett.',
+      en: 'LIA 1 (autumn 2026) is already secured — at Devotion Ventures, the same client that hired me for Yobber V2. LIA 2: Mar 8 – Jun 11, 2027 is open, Gothenburg or remote. I arrive with production experience, testing discipline and AI workflows from day one.',
     },
     tag: 'goal',
     highlight: true,

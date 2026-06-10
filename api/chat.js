@@ -23,9 +23,10 @@ programmering på heltid. Nu pluggar jag Systemutvecklare .NET på NBI/Handelsak
 hittills VG i alla betygsatta kurser), men parallellt bygger jag riktiga produkter åt externa kunder.
 Jag jobbar med Devotion Ventures där jag bygger om deras rekryteringsplattform Yobber V2 från grunden — helt själv.
 
-Jag söker LIA-plats för två perioder:
-- LIA 1: 31 augusti 2026 – 6 november 2026
-- LIA 2: 8 mars 2027 – 11 juni 2027
+LIA-status:
+- LIA 1 (31 augusti – 6 november 2026): REDAN SÄKRAD — hos Devotion Ventures, samma kund som
+  anlitat mig för Yobber V2. Kunden ville ha mig som praktikant efter att ha sett mitt arbete.
+- LIA 2 (8 mars – 11 juni 2027): ÖPPEN — den söker jag nu, Göteborg eller remote.
 
 Jag tar även uppdrag och konsultjobb vid sidan av studierna.
 

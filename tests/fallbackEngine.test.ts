@@ -14,9 +14,14 @@ describe('offline chat construct', () => {
     expect(reply).not.toMatch(/Kärnan/);
   });
 
-  it('handles LIA/internship questions', () => {
-    expect(answerOffline('söker du LIA-plats?', 'sv')).toContain('2026');
-    expect(answerOffline('are you open for an internship?', 'en')).toContain('2026');
+  it('handles LIA/internship questions: LIA 1 secured, LIA 2 open', () => {
+    const sv = answerOffline('söker du LIA-plats?', 'sv');
+    expect(sv).toContain('LIA 2');
+    expect(sv).toContain('2027');
+    expect(sv).toContain('säkrad');
+    const en = answerOffline('are you open for an internship?', 'en');
+    expect(en).toContain('2027');
+    expect(en).toContain('secured');
   });
 
   it('gives contact details', () => {

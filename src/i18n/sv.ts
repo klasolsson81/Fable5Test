@@ -87,8 +87,8 @@ export const sv = {
 
   experience: {
     intro: '2024 valde jag det röda pillret på riktigt: efter 22 år i fordonsindustrin satsade jag allt på systemutveckling.',
-    liaTitle: 'SÖKER LIA-PLATS',
-    liaText: 'LIA 1: 31 aug – 6 nov 2026 · LIA 2: 8 mar – 11 jun 2027 · Göteborg eller remote. Jag tar även konsultuppdrag vid sidan av studierna.',
+    liaTitle: 'SÖKER LIA 2 — VÅREN 2027',
+    liaText: 'LIA 1 (hösten 2026) är redan säkrad. LIA 2: 8 mar – 11 jun 2027 är öppen — Göteborg eller remote. Jag tar även konsultuppdrag vid sidan av studierna.',
     liaCta: 'KONTAKTA MIG',
   },
 
@@ -146,7 +146,7 @@ export const sv = {
       languages: 'SPRÅK',
     },
     values: {
-      status: 'Studerar .NET · bygger produkter · söker LIA 2026/2027',
+      status: 'Studerar .NET · bygger produkter · LIA 1 säkrad · söker LIA 2 våren 2027',
       family: 'Gift familjefar',
       languages: 'Svenska / Engelska',
     },

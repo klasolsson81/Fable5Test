@@ -84,8 +84,8 @@ export const CHAT_KB: KbEntry[] = [
       en: ['lia', 'internship', 'hire', 'recruit', 'available', 'job', 'seeking', 'open'],
     },
     answer: {
-      sv: 'Ja — Klas söker LIA-plats för två perioder: 31 aug–6 nov 2026 och 8 mar–11 jun 2027, i Göteborg eller remote. Han tar även konsultuppdrag vid sidan av studierna. Maila klasolsson81@gmail.com så svarar han inom 24h. Han kommer med produktionserfarenhet från dag ett.',
-      en: 'Yes — Klas is seeking an internship (LIA) for two periods: Aug 31–Nov 6 2026 and Mar 8–Jun 11 2027, in Gothenburg or remote. He also takes consulting work alongside his studies. Email klasolsson81@gmail.com and he will reply within 24h. He arrives with production experience from day one.',
+      sv: 'LIA 1 (hösten 2026) är redan säkrad — hos Devotion Ventures, samma kund som anlitat honom för Yobber V2. Men LIA 2 är öppen: 8 mar–11 jun 2027, Göteborg eller remote. Han tar även konsultuppdrag vid sidan av studierna. Maila klasolsson81@gmail.com så svarar han inom 24h.',
+      en: 'LIA 1 (autumn 2026) is already secured — at Devotion Ventures, the same client that hired him for Yobber V2. But LIA 2 is open: Mar 8–Jun 11 2027, Gothenburg or remote. He also takes consulting work alongside his studies. Email klasolsson81@gmail.com and he will reply within 24h.',
     },
   },
   {
