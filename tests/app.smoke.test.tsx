@@ -74,7 +74,7 @@ describe('app smoke (white path)', () => {
 
     await user.click(screen.getByRole('button', { name: 'EN' }));
     expect(await screen.findByText(/SKILLS MATRIX/)).toBeTruthy();
-    expect(screen.getAllByText(/Seeking internship/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Seeking LIA 2/i).length).toBeGreaterThan(0);
     expect(document.documentElement.lang).toBe('en');
   });
 
