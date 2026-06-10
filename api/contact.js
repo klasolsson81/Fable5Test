@@ -57,7 +57,8 @@ export default async function handler(req, res) {
     await transporter.sendMail({
       from: `"Portfolio: The Construct" <${process.env.GMAIL_USER}>`,
       to: 'klasolsson81@gmail.com',
-      replyTo: `"${name}" <${email}>`,
+      // Object form lets nodemailer handle escaping of the display name
+      replyTo: { name, address: email },
       subject: `▸ Transmission från ${name} (portfolio)`,
       text: `Namn: ${name}\nE-post: ${email}\n\n${message}`,
     });
