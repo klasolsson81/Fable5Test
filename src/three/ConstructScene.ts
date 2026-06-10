@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {
-  RAIN_VERT, RAIN_FRAG, FLOOR_VERT, FLOOR_FRAG, HOLO_VERT, HOLO_FRAG,
+  RAIN_VERT, RAIN_FRAG, FLOOR_VERT, FLOOR_FRAG, HOLO_VERT, HOLO_FRAG, HOLO_WIRE_FRAG,
   CONE_VERT, CONE_FRAG, PANEL_VERT, PANEL_FRAG, PARTICLE_VERT, PARTICLE_FRAG,
 } from './shaders';
 import { buildGlyphAtlas, buildLabelTexture, buildIconTexture, buildRabbitTexture } from './glyphs';
@@ -187,29 +187,62 @@ export class ConstructScene {
   }
 
   private buildHologram(): void {
-    // Portrait — loads async; the rest of the hologram works regardless
-    new THREE.TextureLoader().load('/img/profile/klas.webp', (tex) => {
-      if (this.disposed) { tex.dispose(); return; }
-      tex.colorSpace = THREE.SRGBColorSpace;
-      const aspect = tex.image.width / tex.image.height;
-      const h = 3.4;
+    // Depth-displaced bust — photo cutout + baked depth map become a relief
+    // mesh with real parallax. Loads async; the rest works regardless.
+    const loader = new THREE.TextureLoader();
+    void Promise.all([
+      loader.loadAsync('/img/profile/klas-cutout.webp'),
+      loader.loadAsync('/img/profile/klas-depth.webp'),
+    ]).then(([cutout, depth]) => {
+      if (this.disposed) { cutout.dispose(); depth.dispose(); return; }
+      cutout.colorSpace = THREE.SRGBColorSpace;
+      depth.colorSpace = THREE.NoColorSpace;
+      // Sampled in the vertex shader — keep filtering mip-free
+      depth.generateMipmaps = false;
+      depth.minFilter = THREE.LinearFilter;
+      depth.magFilter = THREE.LinearFilter;
+
+      const aspect = cutout.image.width / cutout.image.height;
+      const h = 3.6;
+      const relief = 1.0;
+      const uniforms = {
+        uMap: { value: cutout },
+        uDepth: { value: depth },
+        uRelief: { value: relief },
+        uTime: { value: 0 },
+        uGlitch: { value: 0 },
+        uOpacity: { value: 0.96 },
+      };
       this.holoMat = new THREE.ShaderMaterial({
         vertexShader: HOLO_VERT,
         fragmentShader: HOLO_FRAG,
+        uniforms,
+        transparent: true,
+        depthWrite: false,
+      });
+      const surface = new THREE.Mesh(new THREE.PlaneGeometry(h * aspect, h, 160, 160), this.holoMat);
+      surface.position.set(0, 3.15, -relief * 0.45);
+      this.holoGroup.add(surface);
+
+      // Coarse wireframe overlay sells the "reconstructed mesh" reading
+      const wireMat = new THREE.ShaderMaterial({
+        vertexShader: HOLO_VERT,
+        fragmentShader: HOLO_WIRE_FRAG,
         uniforms: {
-          uMap: { value: tex },
-          uTime: { value: 0 },
-          uGlitch: { value: 0 },
-          uOpacity: { value: 0.92 },
+          uMap: { value: cutout },
+          uDepth: { value: depth },
+          uRelief: { value: relief },
         },
         transparent: true,
         depthWrite: false,
-        side: THREE.DoubleSide,
+        blending: THREE.AdditiveBlending,
+        wireframe: true,
       });
-      const plane = new THREE.Mesh(new THREE.PlaneGeometry(h * aspect, h), this.holoMat);
-      plane.position.y = 3.1;
-      this.holoGroup.add(plane);
-    });
+      const wire = new THREE.Mesh(new THREE.PlaneGeometry(h * aspect, h, 48, 48), wireMat);
+      wire.position.copy(surface.position);
+      wire.position.z += 0.012;
+      this.holoGroup.add(wire);
+    }).catch((err) => console.warn('hologram textures failed to load', err));
 
     // Projector cone + emitter
     this.coneMat = new THREE.ShaderMaterial({

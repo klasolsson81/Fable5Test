@@ -36,8 +36,14 @@ describe('data integrity', () => {
     }
   });
 
-  it('profile assets exist (photo, AI avatar, CV pdf)', () => {
-    for (const file of [PROFILE.photo, PROFILE.aiAvatar, PROFILE.cvPath]) {
+  it('profile assets exist (photo, AI avatar, CV pdf, hologram bake)', () => {
+    for (const file of [
+      PROFILE.photo,
+      PROFILE.aiAvatar,
+      PROFILE.cvPath,
+      PROFILE.hologramCutout,
+      PROFILE.hologramDepth,
+    ]) {
       expect(existsSync(join(PUBLIC, file)), file).toBe(true);
     }
   });

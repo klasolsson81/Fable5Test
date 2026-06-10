@@ -28,7 +28,8 @@
 ## Funktioner
 
 - **Två verkligheter, en datakälla** — allt innehåll (projekt, skills, erfarenhet, chat-kunskap) ligger i `src/data/` på både svenska och engelska. Red/white är bara två presentationer.
-- **3D-konstruktionen** — ren Three.js (ingen react-three-fiber): digital rain som GLSL-shader på dubbla cylindrar, hologram-porträtt med scanlines/glitch, partikelhalo, projektorkon, 6 klickbara stationer med kamerafärd, draggbar orbit och en vit kanin som dyker upp då och då. Klicka på den.
+- **3D-konstruktionen** — ren Three.js (ingen react-three-fiber): digital rain som GLSL-shader på dubbla cylindrar, partikelhalo, projektorkon, 6 klickbara stationer med kamerafärd, draggbar orbit och en vit kanin som dyker upp då och då. Klicka på den.
+- **Hologram-bysten** — profilfotot blir ett 3D-huvud: `scripts/bake-hologram.mjs` segmenterar silhuetten (flood fill + kromatisk gate), "blåser upp" den via distance transform och bakar en djupkarta. I konstruktionen displaceras ett tätt mesh av djupkartan → äkta parallax, reliefskuggning från djupgradienten, rim-ljus, wireframe-overlay och glitch. Byter du profilbild: kör skriptet igen.
 - **Generativt ljud** — all musik och alla effekter syntetiseras i WebAudio vid körning: drönare genom ett "andande" lågpassfilter, pentatoniska datablippar, whoosh/glitch/typningstick. **Noll ljudfiler, noll licensproblem.** Mute-knapp i HUD:en, läget sparas.
 - **AI-chat ("Konstruktionen")** — pratar via `/api/chat` (OpenAI, samma env-variabel som gamla sajten). Utan API faller den tillbaka på en inbyggd offline-kunskapsbas med ordgräns-matchning — chatten funkar alltså även lokalt och på statisk hosting, ärligt markerad som OFFLINE-LÄGE.
 - **Prestanda som krav** — FPS-vakt som sänker pixel ratio och stänger av partiklar/inre regn vid behov, dpr-tak, pausad rendering i dolda flikar, 3D-chunken (139 kB gz) laddas **bara** om man väljer rött piller. Vita pillret är rent DOM.
@@ -46,7 +47,7 @@
 | State | Zustand |
 | Ljud | WebAudio (helt generativt) |
 | Serverless | Vercel functions: `/api/chat` (OpenAI) + `/api/contact` (Nodemailer) |
-| Test | Vitest + Testing Library (21 tester: i18n-paritet, chatmotor, dataintegritet, render-smoke) |
+| Test | Vitest + Testing Library (35 tester: i18n-paritet, chatmotor, dataintegritet, render-smoke, GLSL-kompilering via glslangValidator) |
 | Typsnitt | Rajdhani + Share Tech Mono, självhostade woff2 (~60 kB totalt) |
 
 ## Kom igång

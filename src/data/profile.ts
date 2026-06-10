@@ -15,6 +15,9 @@ export const PROFILE = {
   cvPath: '/cv/CV_Klas_Olsson.pdf',
   photo: '/img/profile/klas.webp',
   aiAvatar: '/img/profile/klas-ai.webp',
+  /** Baked by scripts/bake-hologram.mjs — drives the 3D bust in the construct. */
+  hologramCutout: '/img/profile/klas-cutout.webp',
+  hologramDepth: '/img/profile/klas-depth.webp',
   intro: {
     sv: 'Efter 22 år i fordonsindustrin valde jag det röda pillret: 2024 sa jag upp mig för att satsa allt på systemutveckling. Nu pluggar jag .NET på NBI/Handelsakademin i Göteborg — och bygger samtidigt riktiga produkter åt riktiga kunder. Hela produkter, från databas till deploy. Inte kursövningar.',
     en: 'After 22 years in the automotive industry I took the red pill: in 2024 I quit my job to go all in on software development. I now study .NET at NBI/Handelsakademin in Gothenburg — while shipping real products for real clients. Whole products, from database to deploy. Not course exercises.',
